@@ -1,6 +1,3 @@
-import time
-
-from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -9,11 +6,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from bs4 import BeautifulSoup
 
 from load_django import *
-from parser_app.models import RepuestosfuentesLinks
+from parser_app.models import LcphonesLinks
 
 
-class RepuestosfuentesLinksParser:
-    BASE_URL = 'https://www.repuestosfuentes.es/'
+class LcphonesLinksParser:
+    BASE_URL = 'https://lcphones.com/'
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -26,7 +23,10 @@ class RepuestosfuentesLinksParser:
             '--disable-setuid-sandbox',
             '--profile-directory=Default',
             '--ignore-ssl-errors=true',
-            '--disable-dev-shm-usage'
+            '--disable-dev-shm-usage',
+            '--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, '
+            'like Gecko) CriOS/86.0.4240.77 Mobile/15E148 Safari/604.1',
+
         ]
         for arg in service_args:
             browser_options.add_argument(arg)
@@ -38,36 +38,25 @@ class RepuestosfuentesLinksParser:
             'profile.default_content_setting_values.notifications': 2,
             'profile.default_content_settings.popups': 0
         })
+        browser_options.add_experimental_option("mobileEmulation", {
+            "deviceMetrics": {"width": 360, "height": 640, "pixelRatio": 3.0},
+        })
 
         self.driver = Chrome(options=browser_options)
 
-    def placer_repuestosfuentes_parser(self):
+    def placer_lcphones_parser(self):
         self.open_site(self.BASE_URL)
 
     def open_site(self, link):
         self.driver.get(link)
-        self._wait_and_choose_element('.soy_item_raiz').click()
+        self._wait_and_choose_element('[class="btn btn-navbar navbar-toggle"]').click()
 
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
-        list_categories = soup.select('.category-sub-menu a')
-        for category in list_categories:
-            url = category['href']
-            self.driver.get(url)
-            try:
-                self._wait_and_choose_element('#soy_subcategories_block li a')
-            except TimeoutException:
-                RepuestosfuentesLinks.objects.get_or_create(
-                    link=url
-                )
-                continue
-
-            soup = BeautifulSoup(self.driver.page_source, 'lxml')
-            links = soup.select('#soy_subcategories_block li a')
-            # links = self.driver.find_elements('#soy_subcategories_block li a')
-            for link in links:
-                RepuestosfuentesLinks.objects.get_or_create(
-                    link=link['href']
-                )
+        list_categories = soup.select('[id="ma-mobilemenu"] li a')
+        for item in list_categories:
+            LcphonesLinks.objects.get_or_create(
+                link=item['href']
+            )
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))
@@ -82,5 +71,5 @@ class RepuestosfuentesLinksParser:
 
 
 if __name__ == '__main__':
-    with RepuestosfuentesLinksParser() as placer:
-        placer.placer_repuestosfuentes_parser()
+    with LcphonesLinksParser() as placer:
+        placer.placer_lcphones_parser()

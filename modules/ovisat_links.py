@@ -1,19 +1,17 @@
 import time
 
-from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from bs4 import BeautifulSoup
 
 from load_django import *
-from parser_app.models import RepuestosfuentesLinks
+from parser_app.models import OvisatLinks
 
 
-class RepuestosfuentesLinksParser:
-    BASE_URL = 'https://www.repuestosfuentes.es/'
+class OvisatLinksParser:
+    BASE_URL = 'https://www.ovisat.com/es'
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -41,33 +39,23 @@ class RepuestosfuentesLinksParser:
 
         self.driver = Chrome(options=browser_options)
 
-    def placer_repuestosfuentes_parser(self):
+    def placer_ovisat_parser(self):
         self.open_site(self.BASE_URL)
 
     def open_site(self, link):
         self.driver.get(link)
-        self._wait_and_choose_element('.soy_item_raiz').click()
-
-        soup = BeautifulSoup(self.driver.page_source, 'lxml')
-        list_categories = soup.select('.category-sub-menu a')
-        for category in list_categories:
-            url = category['href']
-            self.driver.get(url)
-            try:
-                self._wait_and_choose_element('#soy_subcategories_block li a')
-            except TimeoutException:
-                RepuestosfuentesLinks.objects.get_or_create(
-                    link=url
-                )
-                continue
-
-            soup = BeautifulSoup(self.driver.page_source, 'lxml')
-            links = soup.select('#soy_subcategories_block li a')
-            # links = self.driver.find_elements('#soy_subcategories_block li a')
-            for link in links:
-                RepuestosfuentesLinks.objects.get_or_create(
-                    link=link['href']
-                )
+        time.sleep(3)
+        self._wait_and_choose_element('[class="open_categories_sticky"]').click()
+        categories = self.driver.find_elements(
+            By.CSS_SELECTOR,
+            '[class="theme_menu cats dropdown active visible"] [class="list_of_links"] li a'
+        )
+        list_categories = map(lambda x: x.get_attribute('href'), categories)
+        for link in list_categories:
+            print(link)
+            OvisatLinks.objects.get_or_create(
+                link=link
+            )
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))
@@ -82,5 +70,5 @@ class RepuestosfuentesLinksParser:
 
 
 if __name__ == '__main__':
-    with RepuestosfuentesLinksParser() as placer:
-        placer.placer_repuestosfuentes_parser()
+    with OvisatLinksParser() as placer:
+        placer.placer_ovisat_parser()

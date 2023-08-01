@@ -1,5 +1,3 @@
-import time
-
 from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -9,11 +7,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from bs4 import BeautifulSoup
 
 from load_django import *
-from parser_app.models import RepuestosfuentesLinks
+from parser_app.models import ChipspainLinks
 
 
-class RepuestosfuentesLinksParser:
-    BASE_URL = 'https://www.repuestosfuentes.es/'
+class ChipspainLinksParser:
+    BASE_URL = 'https://www.chipspain.com/es/'
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -41,33 +39,20 @@ class RepuestosfuentesLinksParser:
 
         self.driver = Chrome(options=browser_options)
 
-    def placer_repuestosfuentes_parser(self):
+    def placer_chipspain_parser(self):
         self.open_site(self.BASE_URL)
 
     def open_site(self, link):
         self.driver.get(link)
-        self._wait_and_choose_element('.soy_item_raiz').click()
+        self._wait_and_choose_element('[id="chiptopmenu_showmenu"] span')
 
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
-        list_categories = soup.select('.category-sub-menu a')
-        for category in list_categories:
-            url = category['href']
-            self.driver.get(url)
-            try:
-                self._wait_and_choose_element('#soy_subcategories_block li a')
-            except TimeoutException:
-                RepuestosfuentesLinks.objects.get_or_create(
-                    link=url
-                )
-                continue
-
-            soup = BeautifulSoup(self.driver.page_source, 'lxml')
-            links = soup.select('#soy_subcategories_block li a')
-            # links = self.driver.find_elements('#soy_subcategories_block li a')
-            for link in links:
-                RepuestosfuentesLinks.objects.get_or_create(
-                    link=link['href']
-                )
+        list_categories = soup.select('[id="chiptopmenu_ul"] ul li a')
+        print(len(list_categories))
+        for item in list_categories:
+            ChipspainLinks.objects.get_or_create(
+                link=item['href']
+            )
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))
@@ -82,5 +67,5 @@ class RepuestosfuentesLinksParser:
 
 
 if __name__ == '__main__':
-    with RepuestosfuentesLinksParser() as placer:
-        placer.placer_repuestosfuentes_parser()
+    with ChipspainLinksParser() as placer:
+        placer.placer_chipspain_parser()
