@@ -59,10 +59,10 @@ class LcphonesParser:
 
         login = self._wait_and_choose_element('#input-email')
         login.clear()
-        login.send_keys('iernestek@gmail.com')
+        login.send_keys('email')
         password = self._wait_and_choose_element('#input-password')
         password.clear()
-        password.send_keys('ernestek2')
+        password.send_keys('password')
         self._wait_and_choose_element('.form-group + [class="btn btn-primary"]').click()
         self._wait_and_choose_element('.menu-mobile .navbar-toggle')
 

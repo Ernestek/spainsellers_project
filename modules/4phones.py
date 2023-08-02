@@ -53,10 +53,10 @@ class FourPhonesLinksParser:
             pass
         login = self._wait_and_choose_element('[id="customer[email]"]')
         login.clear()
-        login.send_keys('geral@isell.pt')
+        login.send_keys('email')  # send email
         password = self._wait_and_choose_element('[id="customer[password]"]')
         password.clear()
-        password.send_keys('Oleg123!')
+        password.send_keys('password')  # send password
         self._wait_and_choose_element('.action-login-primary').click()
 
     def get_all_info(self):
@@ -115,8 +115,6 @@ class FourPhonesLinksParser:
                     'in_stock': in_stock,
                 },
             )
-
-
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))
