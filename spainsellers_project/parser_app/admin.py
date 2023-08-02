@@ -6,7 +6,8 @@ from parser_app.models import (
     PreciosadictosItem,
     ChipspainItem,
     LcphonesItem,
-    OvisatItem
+    OvisatItem,
+    FourPhonesItem,
 )
 
 base_display = ('sku', 'item_name', 'price', 'link', 'in_stock')
@@ -39,4 +40,9 @@ class LcphonesItemAdmin(admin.ModelAdmin):
 
 @admin.register(OvisatItem)
 class OvisatItemAdmin(admin.ModelAdmin):
+    list_display = base_display
+
+
+@admin.register(FourPhonesItem)
+class FourPhonesItemAdmin(admin.ModelAdmin):
     list_display = base_display

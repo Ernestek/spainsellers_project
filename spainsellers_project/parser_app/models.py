@@ -116,3 +116,24 @@ class OvisatItem(models.Model):
     class Meta:
         verbose_name = 'OvisatItem'
         verbose_name_plural = 'OvisatItems'
+
+
+class FourPhonesLinks(models.Model):
+    link = models.CharField(max_length=512, unique=True)
+    status = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'FourPhonesLink'
+        verbose_name_plural = 'FourPhonesLinks'
+
+
+class FourPhonesItem(models.Model):
+    sku = models.CharField(max_length=256, unique=True)
+    link = models.CharField(max_length=512)
+    item_name = models.CharField(max_length=512)
+    price = models.CharField(max_length=256, null=True, blank=True)
+    in_stock = models.BooleanField()
+
+    class Meta:
+        verbose_name = 'FourPhonesItem'
+        verbose_name_plural = 'FourPhonesItems'
