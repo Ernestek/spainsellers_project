@@ -63,7 +63,9 @@ class FourPhonesLinksParser:
         links = FourPhonesLinks.objects.filter(status=False)
         for link in links:
             self.driver.get(link.link)
-
+            self._wait_and_choose_element('.sortby-select').click()
+            self._wait_and_choose_element('.sortby-select [value="48"]').click()
+            time.sleep(1)
             self.get_info_per_page()
             try:
                 pages = self.driver.find_elements(
@@ -71,7 +73,8 @@ class FourPhonesLinksParser:
                     '#pagination .page a'
                 )[-1].text
                 for page in range(2, int(pages) + 1):
-                    self.driver.get(link.link + f'?page={page}')
+                    print(1)
+                    self.driver.get(link.link + f'?limit=48&page={page}')
                     time.sleep(1)
                     self.get_info_per_page()
             except IndexError:
