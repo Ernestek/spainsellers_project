@@ -18,15 +18,18 @@ class RepuestosfuentesLinksParser:
     def __init__(self):
         browser_options = ChromeOptions()
         service_args = [
-            '--start-maximized',
-            '--no-sandbox',
-            '--disable-web-security',
-            '--allow-running-insecure-content',
-            '--hide-scrollbars',
-            '--disable-setuid-sandbox',
-            '--profile-directory=Default',
+            # '--start-maximized',
+
+            '--headless=True'
+            # 
+            # '--no-sandbox',
+            # '--disable-web-security',
+            # '--allow-running-insecure-content',
+            # '--hide-scrollbars',
+            # '--disable-setuid-sandbox',
+            # '--profile-directory=Default',
             '--ignore-ssl-errors=true',
-            '--disable-dev-shm-usage'
+            # '--disable-dev-shm-usage'
         ]
         for arg in service_args:
             browser_options.add_argument(arg)
@@ -46,7 +49,9 @@ class RepuestosfuentesLinksParser:
 
     def open_site(self, link):
         self.driver.get(link)
-        self._wait_and_choose_element('.soy_item_raiz').click()
+        self._wait_and_choose_element('#soy_menu_icon').click()
+
+        # self._wait_and_choose_element('.soy_item_raiz').click()
 
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
         list_categories = soup.select('.category-sub-menu a')
