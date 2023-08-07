@@ -72,3 +72,4 @@ class OvisatLinksParser:
 if __name__ == '__main__':
     with OvisatLinksParser() as placer:
         placer.placer_ovisat_parser()
+

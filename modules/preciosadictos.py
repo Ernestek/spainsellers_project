@@ -71,6 +71,7 @@ class RepuestosfuentesParser:
 
 
 if __name__ == '__main__':
+    RepuestosfuentesParser().get_all_links()
     RepuestosfuentesParser().get_all_items()
 
 

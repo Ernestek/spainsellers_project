@@ -53,16 +53,16 @@ class FourPhonesLinksParser:
             pass
         login = self._wait_and_choose_element('[id="customer[email]"]')
         login.clear()
-        login.send_keys('email')  # send email
+        login.send_keys('geral@isell.pt')  # send email
         password = self._wait_and_choose_element('[id="customer[password]"]')
         password.clear()
-        password.send_keys('password')  # send password
+        password.send_keys('Oleg123!')  # send password
         self._wait_and_choose_element('.action-login-primary').click()
 
     def get_all_info(self):
         links = FourPhonesLinks.objects.filter(status=False)
         for link in links:
-            self.driver.get(link)
+            self.driver.get(link.link)
 
             self.get_info_per_page()
             try:
@@ -71,7 +71,7 @@ class FourPhonesLinksParser:
                     '#pagination .page a'
                 )[-1].text
                 for page in range(2, int(pages) + 1):
-                    self.driver.get(link + f'?page={page}')
+                    self.driver.get(link.link + f'?page={page}')
                     time.sleep(1)
                     self.get_info_per_page()
             except IndexError:
