@@ -26,12 +26,14 @@ class OvisatParser:
             page = self.session.get(url=link.link, headers=self.headers).content
             soup = BeautifulSoup(page, 'lxml')
             self.get_info(soup)
-
-            pages = soup.select('.paginacion a')[-2].text
-            for page in range(2, int(pages) + 1):
-                page = self.session.get(url=link.link, params={'pag': page}, headers=self.headers).content
-                soup = BeautifulSoup(page, 'lxml')
-                self.get_info(soup)
+            try:
+                pages = soup.select('.paginacion a')[-2].text
+                for page in range(2, int(pages) + 1):
+                    page = self.session.get(url=link.link, params={'pag': page}, headers=self.headers).content
+                    soup = BeautifulSoup(page, 'lxml')
+                    self.get_info(soup)
+            except IndexError:
+                pass
             link.status = True
             link.save()
 

@@ -18,11 +18,14 @@ class RepuestosfuentesParser:
             soup = BeautifulSoup(page, 'lxml')
             self.get_info_per_page(soup)
 
-            pages = soup.select('.sortPagiBar .pagination li a')[-2].text
-            for page in range(2, int(pages) + 1):
-                page = self.session.get(url=link.link, params={'p': page}, headers=self.headers).content
-                soup = BeautifulSoup(page, 'lxml')
-                self.get_info_per_page(soup)
+            try:
+                pages = soup.select('.sortPagiBar .pagination li a')[-2].text
+                for page in range(2, int(pages) + 1):
+                    page = self.session.get(url=link.link, params={'p': page}, headers=self.headers).content
+                    soup = BeautifulSoup(page, 'lxml')
+                    self.get_info_per_page(soup)
+            except IndexError:
+                pass
 
             link.status = True
             link.save()

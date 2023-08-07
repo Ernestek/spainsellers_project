@@ -28,12 +28,14 @@ class BrokersParser:
             page = self.session.get(url=link, headers=self.headers).content
             soup = BeautifulSoup(page, 'lxml')
             self.get_info(soup)
-            last_p = soup.select('.pagination li a')[-2].text
-
-            for p in range(2, int(last_p) + 1):
-                page = self.session.get(url=link, params={'p': p}, headers=self.headers).content
-                soup = BeautifulSoup(page, 'lxml')
-                self.get_info(soup)
+            try:
+                last_p = soup.select('.pagination li a')[-2].text
+                for p in range(2, int(last_p) + 1):
+                    page = self.session.get(url=link, params={'p': p}, headers=self.headers).content
+                    soup = BeautifulSoup(page, 'lxml')
+                    self.get_info(soup)
+            except IndexError:
+                pass
 
     def get_info(self, soup: BeautifulSoup):
         items = soup.select('.product-container')

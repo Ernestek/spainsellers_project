@@ -65,14 +65,17 @@ class FourPhonesLinksParser:
             self.driver.get(link)
 
             self.get_info_per_page()
-            pages = self.driver.find_elements(
-                By.CSS_SELECTOR,
-                '#pagination .page a'
-            )[-1].text
-            for page in range(2, int(pages) + 1):
-                self.driver.get(link + f'?page={page}')
-                time.sleep(1)
-                self.get_info_per_page()
+            try:
+                pages = self.driver.find_elements(
+                    By.CSS_SELECTOR,
+                    '#pagination .page a'
+                )[-1].text
+                for page in range(2, int(pages) + 1):
+                    self.driver.get(link + f'?page={page}')
+                    time.sleep(1)
+                    self.get_info_per_page()
+            except IndexError:
+                pass
             link.status = True
             link.save()
 
