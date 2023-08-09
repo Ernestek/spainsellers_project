@@ -13,6 +13,8 @@ from parser_app.models import LcphonesLinks, LcphonesItem
 
 class LcphonesParser:
     BASE_URL = 'https://lcphones.com/'
+    email = ''
+    passwd = ''
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -59,10 +61,10 @@ class LcphonesParser:
 
         login = self._wait_and_choose_element('#input-email')
         login.clear()
-        login.send_keys('email')
+        login.send_keys(self.email)
         password = self._wait_and_choose_element('#input-password')
         password.clear()
-        password.send_keys('password')
+        password.send_keys(self.passwd)
         self._wait_and_choose_element('.form-group + [class="btn btn-primary"]').click()
         self._wait_and_choose_element('.menu-mobile .navbar-toggle')
 

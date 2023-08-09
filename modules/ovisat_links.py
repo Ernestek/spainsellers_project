@@ -1,5 +1,6 @@
 import time
 
+from selenium.common import TimeoutException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -40,12 +41,20 @@ class OvisatLinksParser:
         self.driver = Chrome(options=browser_options)
 
     def placer_ovisat_parser(self):
+        self.login()
         self.open_site(self.BASE_URL)
 
     def open_site(self, link):
         self.driver.get(link)
         time.sleep(3)
-        self._wait_and_choose_element('[class="open_categories_sticky"]').click()
+        try:
+            self._wait_and_choose_element('[class="fancybox-item fancybox-close"]').click()
+        except TimeoutException:
+            pass
+        try:
+            self._wait_and_choose_element('[class="open_categories_sticky"]').click()
+        except TimeoutException:
+            pass
         categories = self.driver.find_elements(
             By.CSS_SELECTOR,
             '[class="theme_menu cats dropdown active visible"] [class="list_of_links"] li a'
@@ -56,6 +65,21 @@ class OvisatLinksParser:
             OvisatLinks.objects.get_or_create(
                 link=link
             )
+
+    def login(self):
+        self.driver.get('https://www.ovisat.com/es/login')
+        time.sleep(3)
+        try:
+            self._wait_and_choose_element('[class="fancybox-item fancybox-close"]').click()
+        except TimeoutException:
+            pass
+        login = self._wait_and_choose_element('[id="l_email"]')
+        login.clear()
+        login.send_keys('')
+        passwd = self._wait_and_choose_element('[id="l_pass"]')
+        passwd.clear()
+        passwd.send_keys('')
+        self._wait_and_choose_element('[id="botoneraform1"] button').click()
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))

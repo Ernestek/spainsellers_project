@@ -14,13 +14,15 @@ from parser_app.models import RepuestosfuentesLinks
 
 class RepuestosfuentesLinksParser:
     BASE_URL = 'https://www.repuestosfuentes.es/'
+    email = ''
+    passwd = ''
 
     def __init__(self):
         browser_options = ChromeOptions()
         service_args = [
-            # '--start-maximized',
+            '--start-maximized',
 
-            '--headless=True'
+            # '--headless=True'
             # 
             # '--no-sandbox',
             # '--disable-web-security',
@@ -45,6 +47,7 @@ class RepuestosfuentesLinksParser:
         self.driver = Chrome(options=browser_options)
 
     def placer_repuestosfuentes_parser(self):
+        self.login()
         self.open_site(self.BASE_URL)
 
     def open_site(self, link):
@@ -73,6 +76,17 @@ class RepuestosfuentesLinksParser:
                 RepuestosfuentesLinks.objects.get_or_create(
                     link=link['href']
                 )
+
+    def login(self):
+        self.driver.get('https://www.repuestosfuentes.es/autenticacion?back=my-account')
+        login = self._wait_and_choose_element('[id="login-form"] [name="email"]')
+        login.clear()
+        login.send_keys(self.email)
+        passwd = self._wait_and_choose_element('[name="password"]')
+        passwd.clear()
+        passwd.send_keys(self.passwd)
+        self._wait_and_choose_element('[id="submit-login"]').click()
+        time.sleep(2)
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))

@@ -14,6 +14,8 @@ from parser_app.models import FourPhonesLinks, FourPhonesItem
 
 class FourPhonesLinksParser:
     BASE_URL = 'https://4phones.eu/'
+    email = 'geral@isell.pt'
+    passwd = 'Oleg123!'
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -53,10 +55,10 @@ class FourPhonesLinksParser:
             pass
         login = self._wait_and_choose_element('[id="customer[email]"]')
         login.clear()
-        login.send_keys('geral@isell.pt')  # send email
+        login.send_keys(self.email)  # send email
         password = self._wait_and_choose_element('[id="customer[password]"]')
         password.clear()
-        password.send_keys('Oleg123!')  # send password
+        password.send_keys(self.passwd)  # send password
         self._wait_and_choose_element('.action-login-primary').click()
 
     def get_all_info(self):

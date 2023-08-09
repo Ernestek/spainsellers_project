@@ -12,6 +12,8 @@ from parser_app.models import ChipspainLinks
 
 class ChipspainLinksParser:
     BASE_URL = 'https://www.chipspain.com/es/'
+    email = ''
+    passwd = ''
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -40,6 +42,7 @@ class ChipspainLinksParser:
         self.driver = Chrome(options=browser_options)
 
     def placer_chipspain_parser(self):
+        self.login()
         self.open_site(self.BASE_URL)
 
     def open_site(self, link):
@@ -53,6 +56,16 @@ class ChipspainLinksParser:
             ChipspainLinks.objects.get_or_create(
                 link=item['href']
             )
+
+    def login(self):
+        self.driver.get('https://www.chipspain.com/es/inicio-sesion?back=my-account')
+        login = self._wait_and_choose_element('input#email')
+        login.clear()
+        login.send_keys(self.email)
+        password = self._wait_and_choose_element('input#passwd')
+        password.clear()
+        password.send_keys(self.passwd)
+        self._wait_and_choose_element('input#SubmitLogin').click()
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))

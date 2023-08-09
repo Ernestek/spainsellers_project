@@ -10,10 +10,13 @@ from bs4 import BeautifulSoup
 
 from load_django import *
 from parser_app.models import PreciosadictosLinks
+# from modules import account
 
 
 class PreciosadictosLinksParser:
     BASE_URL = 'https://www.preciosadictos.com/'
+    email = ''
+    passwd = ''
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -42,7 +45,25 @@ class PreciosadictosLinksParser:
         self.driver = Chrome(options=browser_options)
 
     def placer_preciosadictos_parser(self):
+        self.login()
         self.open_site(self.BASE_URL)
+
+    def login(self):
+        self.driver.get(self.BASE_URL)
+        try:
+            self._wait_and_choose_element('[class="cookie-consent__popup-button"]').click()
+        except TimeoutException:
+            ...
+        self._wait_and_choose_element('[class="lgin drpd tt tt-27 mhide"]').click()
+        time.sleep(2)
+        login = self._wait_and_choose_element('[name="email_address"]')
+        login.clear()
+        login.send_keys(self.email)
+        passwd = self._wait_and_choose_element('[name="password"]')
+        passwd.clear()
+        passwd.send_keys(self.passwd)
+        self._wait_and_choose_element('[class="rdbt mt-auto"]').click()
+        time.sleep(2)
 
     def open_site(self, link):
         self.driver.get(link)
