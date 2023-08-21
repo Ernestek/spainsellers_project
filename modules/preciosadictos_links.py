@@ -1,5 +1,6 @@
 import time
 
+import requests
 from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -17,6 +18,9 @@ class PreciosadictosLinksParser:
     BASE_URL = 'https://www.preciosadictos.com/'
     email = ''
     passwd = ''
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+    }
 
     def __init__(self):
         browser_options = ChromeOptions()
@@ -124,9 +128,18 @@ class PreciosadictosLinksParser:
             )
             for link in links:
                 print(link.get_attribute('href'))
-                PreciosadictosLinks.objects.get_or_create(
-                    link=link.get_attribute('href')
-                )
+
+                page = requests.get(link.get_attribute('href'), headers=self.headers)
+                soup = BeautifulSoup(page.content, 'lxml')
+                items = soup.select('#categories a')
+                if items:
+                    for item in items:
+                        PreciosadictosLinks.objects.get_or_create(link=item['href'])
+                else:
+                    PreciosadictosLinks.objects.get_or_create(link=link.get_attribute('href'))
+                # PreciosadictosLinks.objects.get_or_create(
+                #     link=link.get_attribute('href')
+                # )
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
         condition = EC.presence_of_element_located((by, selector))

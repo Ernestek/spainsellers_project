@@ -13,6 +13,15 @@ class SpainSellersItem(models.Model):
         verbose_name_plural = 'SpainSellersItems'
 
 
+class SpainSellersLinks(models.Model):
+    link = models.CharField(max_length=512, unique=True)
+    status = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'SpainSellersLink'
+        verbose_name_plural = 'SpainSellersLinks'
+
+
 class RepuestosfuentesLinks(models.Model):
     link = models.CharField(max_length=512, unique=True)
     status = models.BooleanField(default=False)

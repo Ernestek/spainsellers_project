@@ -5,7 +5,7 @@ from load_django import *
 from parser_app.models import SpainSellersItem
 
 
-class BrokersParser:
+class SpainsellersParser:
     BASE_URL = 'https://www.spainsellers.com/servicio-tecnico/'
     session = requests.Session()
     headers = {
@@ -75,4 +75,4 @@ class BrokersParser:
 
 
 if __name__ == '__main__':
-    BrokersParser().get_brokers()
+    SpainsellersParser().get_brokers()

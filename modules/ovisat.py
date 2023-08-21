@@ -12,14 +12,6 @@ class OvisatParser:
         "User-Agent": "Mozilla/5.0",
     }
 
-    def get_all_links(self):
-        links = OvisatLinks.objects.filter(status=False)
-        for link in links:
-            page = requests.get(link.link, headers=self.headers)
-            soup = BeautifulSoup(page.content, 'lxml')
-            for item in soup.select('#categories a'):
-                OvisatLinks.objects.get_or_create(link=item['href'])
-
     def get_all_items(self):
         links = OvisatLinks.objects.filter(status=False)
         for link in links:
@@ -74,7 +66,6 @@ class OvisatParser:
 
 
 if __name__ == '__main__':
-    OvisatParser().get_all_links()
     OvisatParser().get_all_items()
 
 

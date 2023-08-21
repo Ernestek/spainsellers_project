@@ -5,7 +5,7 @@ from load_django import *
 from parser_app.models import PreciosadictosLinks, PreciosadictosItem
 
 
-class RepuestosfuentesParser:
+class PreciosadictosParser:
     BASE_URL = 'https://www.preciosadictos.com/'
     session = requests.Session()
     headers = {
@@ -71,8 +71,8 @@ class RepuestosfuentesParser:
 
 
 if __name__ == '__main__':
-    RepuestosfuentesParser().get_all_links()
-    RepuestosfuentesParser().get_all_items()
+    # PreciosadictosParser().get_all_links()
+    PreciosadictosParser().get_all_items()
 
 
 

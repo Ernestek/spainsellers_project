@@ -20,7 +20,7 @@ class RepuestosfuentesLinksParser:
     def __init__(self):
         browser_options = ChromeOptions()
         service_args = [
-            '--start-maximized',
+            # '--start-maximized',
 
             # '--headless=True'
             # 
@@ -52,7 +52,7 @@ class RepuestosfuentesLinksParser:
 
     def open_site(self, link):
         self.driver.get(link)
-        self._wait_and_choose_element('#soy_menu_icon').click()
+        self._wait_and_choose_element('#soy_menu_icon i').click()
 
         # self._wait_and_choose_element('.soy_item_raiz').click()
 
@@ -85,7 +85,10 @@ class RepuestosfuentesLinksParser:
         passwd = self._wait_and_choose_element('[name="password"]')
         passwd.clear()
         passwd.send_keys(self.passwd)
-        self._wait_and_choose_element('[id="submit-login"]').click()
+        elem = self._wait_and_choose_element('[id="submit-login"]')
+        self.driver.execute_script(f"window.scrollBy(0, 200);")
+        elem.click()
+
         time.sleep(2)
 
     def _wait_and_choose_element(self, selector: str, by: By = By.CSS_SELECTOR, timeout: int = 10) -> WebElement:
